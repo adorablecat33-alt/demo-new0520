@@ -1490,18 +1490,14 @@ const traders = {
 // ── FUNC LIST DEF ──
 const funcDefs = {
   stock: [
-    {id:'stock-order',     label:'證券下單',           icon:'1', section:'交易功能'},
-    {id:'stock-lightning', label:'證券閃電下單',        icon:'2'},
-    {id:'stock-委託回報',  label:'證券－委託回報',      icon:'3', section:'帳務查詢'},
-    {id:'stock-成交回報',  label:'證券－成交回報',      icon:'4'},
-    {id:'stock-庫存查詢',  label:'證券－庫存查詢',      icon:'5'},
-    {id:'stock-未實現損益',label:'證券－未實現損益',    icon:'6'},
-    {id:'stock-維持率查詢',label:'證券－維持率查詢',    icon:'7'},
-    {id:'stock-交易額度查詢',label:'證券－交易額度',    icon:'8'},
-    {id:'stock-對帳單查詢',label:'證券－對帳單',        icon:'9'},
-    {id:'stock-今日損益',  label:'證券－今日已實現損益',icon:'10'},
-    {id:'stock-歷史損益',  label:'證券－歷史已實現損益',icon:'11'},
-    {id:'stock-交割試算',  label:'證券－當日交割試算',  icon:'12'},
+    {id:'stock-order',     label:'證券下單',            icon:'1', section:'交易功能'},
+    {id:'stock-lightning', label:'證券閃電下單',         icon:'2'},
+    {id:'stock-委託回報',  label:'證券－委託紀錄',       icon:'3', section:'帳務查詢'},
+    {id:'stock-成交回報',  label:'證券－成交紀錄',       icon:'4'},
+    {id:'stock-庫存查詢',  label:'證券－庫存查詢',       icon:'5'},
+    {id:'stock-維持率查詢',label:'證券－維持率查詢',     icon:'6'},
+    {id:'stock-今日損益',  label:'證券－當日已實現損益', icon:'7'},
+    {id:'stock-交割試算',  label:'證券－三日內交割試算', icon:'8'},
   ],
   futures: [
     {id:'futures-order',     label:'期貨下單',          icon:'1', section:'交易功能'},
@@ -1906,16 +1902,12 @@ const mobFuncDefs = {
   stock: [
     {id:'stock-order',    label:'證券下單',           type:'trade', page:'mob-stock-order'},
     {id:'stock-lightning',label:'證券閃電下單',        type:'trade', page:'mob-stock-lightning'},
-    {id:'s-委託',   label:'證券-委託回報',       type:'query', section:'帳務查詢', qid:'s-委託'},
-    {id:'s-成交',   label:'證券-成交回報',       type:'query', qid:'s-成交'},
-    {id:'s-庫存',   label:'證券-庫存查詢',       type:'query', qid:'s-庫存'},
-    {id:'s-未實現', label:'證券-未實現損益',     type:'query', qid:'s-未實現'},
-    {id:'s-維持率', label:'證券-維持率查詢',     type:'query', qid:'s-維持率'},
-    {id:'s-額度',   label:'證券-交易額度查詢',   type:'query', qid:'s-額度'},
-    {id:'s-對帳單', label:'證券-對帳單查詢',     type:'query', qid:'s-對帳單'},
-    {id:'s-今日損益',label:'證券-今日已實現損益',type:'query', qid:'s-今日損益'},
-    {id:'s-歷史損益',label:'證券-歷史已實現損益',type:'query', qid:'s-歷史損益'},
-    {id:'s-交割試算',label:'證券-當日交割試算',  type:'query', qid:'s-交割試算'},
+    {id:'s-委託',   label:'證券-委託紀錄',        type:'query', section:'帳務查詢', qid:'s-委託'},
+    {id:'s-成交',   label:'證券-成交紀錄',        type:'query', qid:'s-成交'},
+    {id:'s-庫存',   label:'證券-庫存查詢',        type:'query', qid:'s-庫存'},
+    {id:'s-維持率', label:'證券-維持率查詢',      type:'query', qid:'s-維持率'},
+    {id:'s-今日損益',label:'證券-當日已實現損益', type:'query', qid:'s-今日損益'},
+    {id:'s-交割試算',label:'證券-三日內交割試算', type:'query', qid:'s-交割試算'},
   ],
   futures: [
     {id:'futures-order',    label:'期貨下單',          type:'trade', page:'mob-futures-order'},
@@ -2012,148 +2004,16 @@ function mobSubmitOrder(market, dir) {
 
 function renderMobQuery(qid) {
   const body = document.getElementById('mob-query-body');
+  // 圖片頁面移除 padding
+  const imgPages = ['s-委託','s-成交','s-庫存','s-維持率','s-今日損益','s-交割試算'];
+  if (body) body.style.padding = imgPages.includes(qid) ? '0' : '14px';
   const qMap = {
-    's-委託': `
-      <div class="mob-summary-grid">
-        <div class="mob-summary-card"><div class="mob-summary-label">委託筆數</div><div class="mob-summary-val" style="color:var(--accent)">8</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">已成交</div><div class="mob-summary-val down">5</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">委託中</div><div class="mob-summary-val warn">2</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">已撤單</div><div class="mob-summary-val muted">1</div></div>
-      </div>
-      ${mobOrderList([
-        {sym:'2330台積電',dir:'買進',qty:'10張',price:'948',status:'filled',ts:'14:47',id:'S-1001'},
-        {sym:'2317鴻海',dir:'買進',qty:'5張',price:'178.5',status:'filled',ts:'14:30',id:'S-1000'},
-        {sym:'2454聯發科',dir:'賣出',qty:'2張',price:'市價',status:'cancelled',ts:'14:10',id:'S-0999'},
-        {sym:'2882國泰金',dir:'買進',qty:'20張',price:'61.5',status:'filled',ts:'13:55',id:'S-0998'},
-        {sym:'2330台積電',dir:'賣出',qty:'5張',price:'955',status:'pending',ts:'13:20',id:'S-0997'},
-      ])}`,
-    's-成交': `
-      <div class="mob-summary-grid">
-        <div class="mob-summary-card"><div class="mob-summary-label">成交筆數</div><div class="mob-summary-val" style="color:var(--accent)">5</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">買進金額</div><div class="mob-summary-val up">2,850,000</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">賣出金額</div><div class="mob-summary-val down">1,960,000</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">手續費</div><div class="mob-summary-val muted">1,202</div></div>
-      </div>
-      ${mobTradeList([
-        {sym:'2330台積電',dir:'買進',qty:10,price:'948.0',amt:'9,480,000',fee:'2,370',ts:'14:47'},
-        {sym:'2317鴻海',dir:'買進',qty:5,price:'178.5',amt:'892,500',fee:'223',ts:'14:30'},
-        {sym:'2882國泰金',dir:'賣出',qty:10,price:'62.0',amt:'620,000',fee:'155',ts:'13:40'},
-      ])}`,
-    's-庫存': `
-      <div class="mob-summary-grid">
-        <div class="mob-summary-card"><div class="mob-summary-label">持股市值</div><div class="mob-summary-val">2,812,000</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">未實現損益</div><div class="mob-summary-val up">-18,200</div></div>
-      </div>
-      ${mobPosList([
-        {sym:'2330 台積電',qty:10,cost:'950.0',price:'948.0',pnl:-20000,rate:-2.11},
-        {sym:'2317 鴻海',qty:5,cost:'176.0',price:'178.5',pnl:12500,rate:1.42},
-        {sym:'2454 聯發科',qty:3,cost:'1,023',price:'1,020',pnl:-9000,rate:-0.29},
-        {sym:'2882 國泰金',qty:20,cost:'61.2',price:'62.0',pnl:16000,rate:1.31},
-      ])}`,
-    's-未實現': `
-      <div class="mob-summary-grid">
-        <div class="mob-summary-card"><div class="mob-summary-label">總未實現損益</div><div class="mob-summary-val up">-500</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">損益率</div><div class="mob-summary-val up">-0.02%</div></div>
-      </div>
-      ${mobPosList([
-        {sym:'2330 台積電',qty:10,cost:'950.0',price:'948.0',pnl:-20000,rate:-2.11},
-        {sym:'2317 鴻海',qty:5,cost:'176.0',price:'178.5',pnl:12500,rate:1.42},
-        {sym:'2454 聯發科',qty:3,cost:'1,023',price:'1,020',pnl:-9000,rate:-0.29},
-        {sym:'2882 國泰金',qty:20,cost:'61.2',price:'62.0',pnl:16000,rate:1.31},
-      ])}`,
-    's-維持率': `
-      <div class="mob-summary-grid">
-        <div class="mob-summary-card"><div class="mob-summary-label">整戶維持率</div><div class="mob-summary-val down">168%</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">追繳門檻</div><div class="mob-summary-val warn">130%</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">強制平倉</div><div class="mob-summary-val danger">120%</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">狀態</div><div class="mob-summary-val down">正常</div></div>
-      </div>
-      <div class="mob-list-item">
-        <div class="mob-list-title">2330 台積電</div>
-        <div class="mob-list-row"><span class="mob-list-key">融資金額</span><span class="mob-list-val">570,000</span></div>
-        <div class="mob-list-row"><span class="mob-list-key">市值</span><span class="mob-list-val">948,000</span></div>
-        <div class="mob-list-row"><span class="mob-list-key">維持率</span><span class="mob-list-val down">166%</span></div>
-        <div class="mob-list-row"><span class="mob-list-key">狀態</span><span class="badge badge-down">正常</span></div>
-      </div>`,
-    's-額度': `
-      <div class="mob-summary-grid">
-        <div class="mob-summary-card"><div class="mob-summary-label">核定額度</div><div class="mob-summary-val">5,000,000</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">採用額度</div><div class="mob-summary-val" style="color:var(--accent)">4,800,000</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">已使用</div><div class="mob-summary-val warn">2,040,000</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">剩餘可用</div><div class="mob-summary-val down">2,760,000</div></div>
-      </div>
-      <div style="margin-top:8px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px;font-size:12px">
-          <span style="color:var(--text-muted)">額度使用率</span><span class="mono warn">42.5%</span>
-        </div>
-        <div style="height:8px;background:var(--bg-tertiary);border-radius:4px;overflow:hidden">
-          <div style="height:100%;width:42.5%;background:var(--warn);border-radius:4px"></div>
-        </div>
-      </div>`,
-    's-對帳單': `
-      <div style="display:flex;gap:8px;margin-bottom:12px">
-        <input type="date" value="2026-05-01" style="flex:1;background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);color:var(--text-primary);font-size:12px;padding:6px 8px;outline:none">
-        <input type="date" value="2026-05-20" style="flex:1;background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);color:var(--text-primary);font-size:12px;padding:6px 8px;outline:none">
-      </div>
-      <div class="mob-list-item">
-        <div class="mob-list-row"><span class="mob-list-key">05/20 (T)</span><span class="badge badge-up">買進</span></div>
-        <div class="mob-list-title">2330台積電 × 10張</div>
-        <div class="mob-list-row"><span class="mob-list-key">成交價</span><span class="mob-list-val">948.0</span></div>
-        <div class="mob-list-row"><span class="mob-list-key">交割日</span><span class="mob-list-val">05/22 (T+2)</span></div>
-        <div class="mob-list-row"><span class="mob-list-key">交割款</span><span class="mob-list-val up">-9,482,370</span></div>
-      </div>
-      <div class="mob-list-item">
-        <div class="mob-list-row"><span class="mob-list-key">05/19 (T)</span><span class="badge badge-down">賣出</span></div>
-        <div class="mob-list-title">2317鴻海 × 5張</div>
-        <div class="mob-list-row"><span class="mob-list-key">成交價</span><span class="mob-list-val">178.5</span></div>
-        <div class="mob-list-row"><span class="mob-list-key">交割日</span><span class="mob-list-val">05/21 (T+2)</span></div>
-        <div class="mob-list-row"><span class="mob-list-key">交割款</span><span class="mob-list-val down">+892,009</span></div>
-      </div>`,
-    's-今日損益': `
-      <div class="mob-summary-grid">
-        <div class="mob-summary-card"><div class="mob-summary-label">今日已實現</div><div class="mob-summary-val up">-42,500</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">獲利</div><div class="mob-summary-val down">+28,000</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">虧損</div><div class="mob-summary-val up">-70,500</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">手續費+稅</div><div class="mob-summary-val muted">1,202</div></div>
-      </div>
-      <div class="mob-list-item">
-        <div class="mob-list-title">2330台積電</div>
-        <div class="mob-list-row"><span class="mob-list-key">方向/張數</span><span class="mob-list-val">賣出 5張</span></div>
-        <div class="mob-list-row"><span class="mob-list-key">均買價 → 均賣價</span><span class="mob-list-val">955.0 → 948.0</span></div>
-        <div class="mob-list-row"><span class="mob-list-key">損益</span><span class="mob-list-val up">-35,000</span></div>
-      </div>
-      <div class="mob-list-item">
-        <div class="mob-list-title">2317鴻海</div>
-        <div class="mob-list-row"><span class="mob-list-key">方向/張數</span><span class="mob-list-val">賣出 3張</span></div>
-        <div class="mob-list-row"><span class="mob-list-key">均買價 → 均賣價</span><span class="mob-list-val">175.0 → 178.5</span></div>
-        <div class="mob-list-row"><span class="mob-list-key">損益</span><span class="mob-list-val down">+10,500</span></div>
-      </div>`,
-    's-歷史損益': `
-      <div class="mob-summary-grid">
-        <div class="mob-summary-card"><div class="mob-summary-label">期間損益</div><div class="mob-summary-val down">+1,280,000</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">勝率</div><div class="mob-summary-val down">72.4%</div></div>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:12px">
-        <input type="date" value="2026-01-01" style="flex:1;background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);color:var(--text-primary);font-size:12px;padding:6px 8px;outline:none">
-        <input type="date" value="2026-05-20" style="flex:1;background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);color:var(--text-primary);font-size:12px;padding:6px 8px;outline:none">
-      </div>
-      <div class="mob-list-item">
-        <div class="mob-list-row"><span class="mob-list-key">05/19</span><span class="badge badge-down">+150,000</span></div>
-        <div class="mob-list-title">2330台積電 × 10張</div>
-        <div class="mob-list-row"><span class="mob-list-key">損益率</span><span class="mob-list-val down">+1.6%</span></div>
-      </div>
-      <div class="mob-list-item">
-        <div class="mob-list-row"><span class="mob-list-key">05/18</span><span class="badge badge-up">-150,000</span></div>
-        <div class="mob-list-title">2454聯發科 × 5張</div>
-        <div class="mob-list-row"><span class="mob-list-key">損益率</span><span class="mob-list-val up">-2.86%</span></div>
-      </div>`,
-    's-交割試算': `
-      <div class="mob-summary-grid">
-        <div class="mob-summary-card"><div class="mob-summary-label">T+1 (5/21) 應付</div><div class="mob-summary-val up">-948,237</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">T+2 (5/22) 應收</div><div class="mob-summary-val down">+892,500</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">三日淨額</div><div class="mob-summary-val up">-55,737</div></div>
-        <div class="mob-summary-card"><div class="mob-summary-label">今日 (5/20)</div><div class="mob-summary-val muted">0</div></div>
-      </div>`,
+    's-委託': '<img src="images/order-history.png" style="width:100%;height:auto;display:block" alt="證券委託紀錄">',
+    's-成交': '<img src="images/trade-history.png" style="width:100%;height:auto;display:block" alt="證券成交紀錄">',
+    's-庫存': '<img src="images/inventory.png" style="width:100%;height:auto;display:block" alt="證券庫存">',
+    's-維持率': '<img src="images/maintain-rate.png" style="width:100%;height:auto;display:block" alt="證券維持率">',
+    's-今日損益': '<img src="images/today-pnl.png" style="width:100%;height:auto;display:block" alt="當日已實現損益">',
+    's-交割試算': '<img src="images/settlement.jpg" style="width:100%;height:auto;display:block" alt="三日內交割試算">',
     'f-委託': `
       <div class="mob-summary-grid">
         <div class="mob-summary-card"><div class="mob-summary-label">委託筆數</div><div class="mob-summary-val" style="color:var(--accent)">12</div></div>
