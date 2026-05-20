@@ -1,0 +1,164 @@
+// ── SHARED STATE ──
+const AppState = {
+  currentTrader: 'wzy',
+  currentAccount: 'sinopac_fut',
+  marketOpen: true,
+  systemTime: new Date(),
+
+  traders: {
+    wzy:  { name:'交易員A', type:'CAPITAL', todayPnl:-4450000, floatPnl:-3588220, avail:29873072, risk:225, lossRate:44.5, quotaRate:51.3, locked:false, active:true },
+    czl:  { name:'交易員B', type:'CAPITAL', todayPnl:-132299,  floatPnl:-88000,   avail:8200000,  risk:121, lossRate:13.2, quotaRate:76.4, locked:false, active:true },
+    chen: { name:'交易員C', type:'PROP',    todayPnl:85000,    floatPnl:12000,    avail:15000000, risk:340, lossRate:5.1,  quotaRate:32.0, locked:false, active:true },
+  },
+
+  accounts: {
+    sinopac_fut: { label:'永豐 期-台北3240627', broker:'sinopac', type:'FUTURES', status:'ACTIVE', locked:false },
+    sinopac_stk: { label:'永豐 證-敦南0388939', broker:'sinopac', type:'STOCK',   status:'ACTIVE', locked:false },
+    fubon_fut:   { label:'富邦 期-0239847',     broker:'fubon',   type:'FUTURES', status:'ACTIVE', locked:false },
+    kgi_stk:     { label:'凱基 證-7832910',     broker:'kgi',     type:'STOCK',   status:'ACTIVE', locked:false },
+  },
+
+  marketData: {
+    taiex:  { val: 40175, chg: -716,  pct: -1.75 },
+    txf:    { val: 40240, chg: -725,  pct: -1.77 },
+    mtx:    { val: 40232, chg: -718,  pct: -1.75 },
+    usd_twd:{ val: 31.82, chg: +0.12, pct: +0.38 },
+  },
+
+  riskAlerts: [
+    { id:1, ts:'14:47:08', trader:'交易員A', account:'永豐期台北', level:'warn',   event:'日損警戒 44.5%',       handled:false },
+    { id:2, ts:'14:22:15', trader:'交易員B', account:'富邦期',     level:'danger', event:'風險指標超標 121%',    handled:false },
+    { id:3, ts:'13:58:40', trader:'交易員C', account:'凱基證',     level:'info',   event:'大額委託二次確認',     handled:true  },
+    { id:4, ts:'13:10:00', trader:'系統',    account:'—',          level:'info',   event:'風控規則更新 (管理員)', handled:true  },
+  ],
+};
+
+// ── TIME ──
+function fmtTime(d = new Date()) {
+  return d.toTimeString().slice(0,8);
+}
+function fmtDateTime(d = new Date()) {
+  return d.toISOString().replace('T',' ').slice(0,19);
+}
+function startClock(el) {
+  function tick() {
+    AppState.systemTime = new Date();
+    if (el) el.textContent = fmtTime(AppState.systemTime);
+  }
+  tick();
+  return setInterval(tick, 1000);
+}
+
+// ── NUMBER FORMAT ──
+function fmt(n, decimals = 0) {
+  if (n == null) return '—';
+  return Number(n).toLocaleString('zh-TW', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+}
+function fmtPnl(n) {
+  if (n == null) return '—';
+  const s = n >= 0 ? '+' : '';
+  return s + fmt(n);
+}
+function colorPnl(n) {
+  return n >= 0 ? 'down' : 'up'; // down=green up=red (台股慣例)
+}
+
+// ── TOAST ──
+function showToast(title, msg = '', type = 'info', duration = 5000) {
+  let container = document.getElementById('toastContainer');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toastContainer';
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+  }
+  const colorMap = { info:'var(--accent)', success:'var(--down)', warn:'var(--warn)', danger:'var(--danger)' };
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.style.borderLeftColor = colorMap[type] || 'var(--accent)';
+  t.style.borderLeftWidth = '3px';
+  t.innerHTML = `
+    <div style="flex:1">
+      <div class="toast-title" style="color:${colorMap[type]}">${title}</div>
+      ${msg ? `<div class="toast-msg">${msg}</div>` : ''}
+    </div>
+    <div class="toast-close" onclick="this.parentElement.remove()">✕</div>
+  `;
+  container.appendChild(t);
+  if (duration > 0) setTimeout(() => t.remove(), duration);
+}
+
+// ── MODAL ──
+function openModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('open');
+}
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+}
+
+// ── NAV ACTIVE ──
+function setNavActive(page) {
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.page === page);
+  });
+}
+
+// ── INDEX BAR TICK ──
+function tickMarket() {
+  Object.keys(AppState.marketData).forEach(k => {
+    const d = AppState.marketData[k];
+    d.val += (Math.random() - 0.5) * 8;
+    d.chg += (Math.random() - 0.5) * 2;
+    d.pct = d.chg / (d.val - d.chg) * 100;
+  });
+  renderIndexBar();
+}
+function renderIndexBar() {
+  const bar = document.getElementById('indexBar');
+  if (!bar) return;
+  const d = AppState.marketData;
+  bar.innerHTML = `
+    <div class="idx-item">
+      <span class="idx-name">加權指數</span>
+      <span class="idx-val ${d.taiex.chg>=0?'down':'up'}">${fmt(d.taiex.val)}</span>
+      <span class="idx-chg ${d.taiex.chg>=0?'down':'up'}">${d.taiex.chg>=0?'▲':'▼'} ${Math.abs(d.taiex.chg).toFixed(0)} (${d.taiex.pct.toFixed(2)}%)</span>
+    </div>
+    <div class="idx-item">
+      <span class="idx-name">台指期</span>
+      <span class="idx-val ${d.txf.chg>=0?'down':'up'}">${fmt(d.txf.val)}</span>
+      <span class="idx-chg ${d.txf.chg>=0?'down':'up'}">${d.txf.chg>=0?'▲':'▼'} ${Math.abs(d.txf.chg).toFixed(0)}</span>
+    </div>
+    <div class="idx-item">
+      <span class="idx-name">小台</span>
+      <span class="idx-val ${d.mtx.chg>=0?'down':'up'}">${fmt(d.mtx.val)}</span>
+      <span class="idx-chg ${d.mtx.chg>=0?'down':'up'}">${d.mtx.chg>=0?'▲':'▼'} ${Math.abs(d.mtx.chg).toFixed(0)}</span>
+    </div>
+    <div class="idx-item">
+      <span class="idx-name">美元/台幣</span>
+      <span class="idx-val">${d.usd_twd.val.toFixed(2)}</span>
+      <span class="idx-chg ${d.usd_twd.chg>=0?'up':'down'}">${d.usd_twd.chg>=0?'+':''}${d.usd_twd.chg.toFixed(2)}</span>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:6px;">
+      <div class="pulse-dot"></div>
+      <span style="font-size:10px;color:var(--text-muted);" id="clockDisplay">${fmtTime()}</span>
+    </div>
+  `;
+}
+
+// ── RISK BAR RENDER ──
+function renderRiskBar(pct, containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const color = pct >= 80 ? 'var(--danger)' : pct >= 60 ? 'var(--warn)' : 'var(--accent)';
+  el.innerHTML = `
+    <div class="risk-bar-track">
+      <div class="risk-bar-fill" style="width:${Math.min(pct,100)}%;background:${color}"></div>
+    </div>
+    <span style="font-family:var(--mono);font-size:11px;color:${color}">${pct.toFixed(1)}%</span>
+  `;
+}
