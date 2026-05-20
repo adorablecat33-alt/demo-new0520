@@ -507,6 +507,111 @@ body{display:flex;flex-direction:column;overflow:hidden}
 }
 }
 
+
+/* ── 閃電下單價格板 ── */
+.ls-qty-btn {
+  width: 32px; height: 28px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 13px; font-weight: 700;
+  cursor: pointer; transition: all .12s;
+}
+.ls-qty-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.ls-price-row {
+  display: grid;
+  grid-template-columns: 1fr 80px 1fr;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  min-height: 42px;
+  position: relative;
+}
+.ls-buy-cell {
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  background: rgba(255,64,96,0.07);
+  transition: background .1s;
+  padding: 4px 8px;
+}
+.ls-buy-cell:active { background: rgba(255,64,96,0.35) !important; }
+.ls-buy-vol {
+  font-family: var(--mono); font-size: 14px; font-weight: 600;
+  color: var(--up);
+}
+.ls-sell-cell {
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  background: rgba(0,212,160,0.07);
+  transition: background .1s;
+  padding: 4px 8px;
+}
+.ls-sell-cell:active { background: rgba(0,212,160,0.35) !important; }
+.ls-sell-vol {
+  font-family: var(--mono); font-size: 14px; font-weight: 600;
+  color: var(--down);
+}
+.ls-price-cell {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--bg-secondary);
+  padding: 2px 4px;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+.ls-price-val {
+  font-family: var(--mono); font-size: 15px; font-weight: 700;
+  color: var(--text-primary);
+}
+.ls-price-pct {
+  font-family: var(--mono); font-size: 9px;
+  margin-top: 1px;
+}
+.ls-price-row.current-price .ls-price-cell {
+  background: var(--bg-tertiary);
+  border-top: 2px solid var(--warn);
+  border-bottom: 2px solid var(--warn);
+}
+.ls-price-row.current-price .ls-price-val { color: var(--warn); }
+.ls-tag {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  top: 1px; font-size: 9px; color: var(--warn); font-weight: 700;
+}
+/* 成交閃爍動畫 */
+@keyframes flash-buy {
+  0% { background: rgba(255,64,96,0.6); }
+  100% { background: rgba(255,64,96,0.07); }
+}
+@keyframes flash-sell {
+  0% { background: rgba(0,212,160,0.6); }
+  100% { background: rgba(0,212,160,0.07); }
+}
+.flash-buy { animation: flash-buy .4s ease; }
+.flash-sell { animation: flash-sell .4s ease; }
+
+/* 浮動送單提示 */
+.ls-toast {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 16px 24px;
+  text-align: center;
+  z-index: 999;
+  box-shadow: 0 8px 40px rgba(0,0,0,.7);
+  animation: ls-toast-in .2s ease;
+  pointer-events: none;
+}
+@keyframes ls-toast-in {
+  from { transform: translate(-50%,-50%) scale(.85); opacity:0; }
+  to   { transform: translate(-50%,-50%) scale(1);   opacity:1; }
+}
+
 </style>
 </head>
 <body>
@@ -1863,6 +1968,10 @@ function mobSwitchMarket(market) {
 function mobOpenPage(id, label, page, qid) {
   // hide func list
   document.getElementById('mob-funcList').style.display = 'none';
+  // 閃電下單初始化
+  if (page === 'mob-stock-lightning' || page === 'mob-futures-lightning') {
+    setTimeout(initLightningStock, 50);
+  }
   document.querySelectorAll('.mob-page').forEach(p => p.classList.remove('active'));
   document.querySelector('.mob-market-tabs').style.display = 'none';
   document.querySelector('.mob-acc-bar').style.display = 'none';
@@ -2268,6 +2377,183 @@ function mobToggleLightning() {
   showToast('⚡ 閃電模式', '已切換', 'warn');
 }
 
+
+// ── 閃電下單系統 ──
+let lsQty = 1;
+let lsType = '現股';
+let lsCurrentPrice = 948.0;
+let lsRefPrice = 950.0;
+let lsSymbol = '2330';
+let lsName = '台積電';
+let lsTickInterval = null;
+
+function initLightningStock() {
+  lsCurrentPrice = 948.0;
+  lsRefPrice = 950.0;
+  renderLsPriceBoard();
+  if (lsTickInterval) clearInterval(lsTickInterval);
+  lsTickInterval = setInterval(() => {
+    // 模擬價格微動
+    lsCurrentPrice += (Math.random() - 0.5) * 1.0;
+    lsCurrentPrice = Math.round(lsCurrentPrice * 10) / 10;
+    document.getElementById('ls-last-price').textContent = lsCurrentPrice.toFixed(1);
+    const chg = lsCurrentPrice - lsRefPrice;
+    const chgEl = document.getElementById('ls-chg');
+    if (chgEl) {
+      chgEl.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(1);
+      chgEl.style.color = chg >= 0 ? 'var(--down)' : 'var(--up)';
+    }
+    // 隨機更新某檔量
+    updateRandomVol();
+  }, 2000);
+}
+
+function renderLsPriceBoard() {
+  const board = document.getElementById('ls-price-board');
+  if (!board) return;
+
+  const base = Math.round(lsRefPrice * 10) / 10;
+  const tickSize = base >= 1000 ? 1 : base >= 500 ? 0.5 : 0.1;
+  const limitUp   = Math.round(base * 1.10 * 10) / 10;
+  const limitDown = Math.round(base * 0.90 * 10) / 10;
+
+  // 生成15檔：現價上7檔 + 現價 + 現價下7檔
+  const prices = [];
+  const cur = Math.round(lsCurrentPrice / tickSize) * tickSize;
+  for (let i = 7; i >= -7; i--) {
+    prices.push(Math.round((cur + i * tickSize) * 10) / 10);
+  }
+
+  board.innerHTML = prices.map((p, idx) => {
+    const isCurrent = idx === 7;
+    const pct = ((p - base) / base * 100).toFixed(2);
+    const pctColor = p > base ? 'var(--up)' : p < base ? 'var(--down)' : 'var(--text-muted)';
+    const isLimitUp   = p >= limitUp;
+    const isLimitDown = p <= limitDown;
+
+    // 模擬委買/委賣量（現價以下有買量，現價以上有賣量）
+    const buyVol  = p < cur ? Math.floor(Math.random() * 2000 + 100) : 0;
+    const sellVol = p > cur ? Math.floor(Math.random() * 2000 + 100) : 0;
+    const buyVolStr  = buyVol  ? buyVol.toLocaleString() : '';
+    const sellVolStr = sellVol ? sellVol.toLocaleString() : '';
+
+    let tag = '';
+    if (isLimitUp)   tag = '<span class="ls-tag" style="color:var(--up)">漲停</span>';
+    if (isLimitDown) tag = '<span class="ls-tag" style="color:var(--down)">跌停</span>';
+    if (isCurrent)   tag = '<span class="ls-tag" style="color:var(--warn)">現</span>';
+    if (Math.abs(p - base) < 0.01) tag += '<span class="ls-tag" style="top:14px;color:var(--text-muted)">昨</span>';
+
+    const rowClass = isCurrent ? 'ls-price-row current-price' : 'ls-price-row';
+    const priceDisplay = isLimitUp ? `<span style="color:var(--up);font-size:15px;font-weight:800;font-family:var(--mono)">${p.toFixed(1)}</span>`
+                        : isLimitDown ? `<span style="color:var(--down);font-size:15px;font-weight:800;font-family:var(--mono)">${p.toFixed(1)}</span>`
+                        : `<span class="ls-price-val" style="color:${p > base ? 'var(--up)' : p < base ? 'var(--down)' : 'var(--text-primary)'}">${p.toFixed(1)}</span>`;
+
+    // 背景熱度（量越大背景越深）
+    const buyBg  = buyVol  ? `rgba(255,64,96,${Math.min(0.35, buyVol/5000*0.35)})` : 'rgba(255,64,96,0.05)';
+    const sellBg = sellVol ? `rgba(0,212,160,${Math.min(0.35, sellVol/5000*0.35)})` : 'rgba(0,212,160,0.05)';
+
+    return `<div class="${rowClass}" id="ls-row-${idx}">
+      ${tag}
+      <div class="ls-buy-cell" id="ls-buy-${idx}"
+        style="background:${buyBg}"
+        onclick="lsPlaceOrder('buy', ${p}, ${idx})">
+        <span class="ls-buy-vol" id="ls-bvol-${idx}">${buyVolStr}</span>
+      </div>
+      <div class="ls-price-cell">
+        ${priceDisplay}
+        <span class="ls-price-pct" style="color:${pctColor}">${p > base ? '+' : ''}${pct}%</span>
+      </div>
+      <div class="ls-sell-cell" id="ls-sell-${idx}"
+        style="background:${sellBg}"
+        onclick="lsPlaceOrder('sell', ${p}, ${idx})">
+        <span class="ls-sell-vol" id="ls-svol-${idx}">${sellVolStr}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateRandomVol() {
+  for (let i = 0; i < 15; i++) {
+    const bv = document.getElementById('ls-bvol-' + i);
+    const sv = document.getElementById('ls-svol-' + i);
+    if (bv && bv.textContent) {
+      const v = parseInt(bv.textContent.replace(/,/g,'')) + Math.floor((Math.random()-.4)*80);
+      bv.textContent = Math.max(0,v).toLocaleString();
+    }
+    if (sv && sv.textContent) {
+      const v = parseInt(sv.textContent.replace(/,/g,'')) + Math.floor((Math.random()-.4)*80);
+      sv.textContent = Math.max(0,v).toLocaleString();
+    }
+  }
+}
+
+function lsPlaceOrder(dir, price, rowIdx) {
+  const cellId = dir === 'buy' ? 'ls-buy-' + rowIdx : 'ls-sell-' + rowIdx;
+  const cell = document.getElementById(cellId);
+
+  // 閃爍動畫
+  if (cell) {
+    cell.classList.remove('flash-buy', 'flash-sell');
+    void cell.offsetWidth;
+    cell.classList.add(dir === 'buy' ? 'flash-buy' : 'flash-sell');
+  }
+
+  // 浮動提示
+  showLsToast(dir, price);
+
+  // 加入稽核
+  const now = new Date().toTimeString().slice(0,8);
+  console.log(`[AUDIT] ${now} 閃電${dir==='buy'?'買進':'賣出'} ${lsSymbol} ${lsQty}張 @${price}`);
+}
+
+function showLsToast(dir, price) {
+  // 移除舊的
+  const old = document.getElementById('ls-float-toast');
+  if (old) old.remove();
+
+  const isBuy = dir === 'buy';
+  const toast = document.createElement('div');
+  toast.id = 'ls-float-toast';
+  toast.className = 'ls-toast';
+  toast.style.borderTop = `3px solid ${isBuy ? 'var(--up)' : 'var(--down)'}`;
+  toast.innerHTML = `
+    <div style="font-size:22px;margin-bottom:6px">${isBuy ? '🔴' : '🟢'}</div>
+    <div style="font-size:16px;font-weight:700;color:${isBuy ? 'var(--up)' : 'var(--down)'};margin-bottom:4px">
+      ${isBuy ? '買進' : '賣出'} 委託送出
+    </div>
+    <div style="font-family:var(--mono);font-size:20px;font-weight:800;color:var(--text-primary);margin-bottom:6px">
+      ${lsSymbol} ${lsName}
+    </div>
+    <div style="font-size:13px;color:var(--text-secondary)">
+      ${lsQty} 張 × <span style="font-family:var(--mono);font-weight:700">${price.toFixed(1)}</span>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:4px">${lsType} · 限價</div>
+  `;
+  document.body.appendChild(toast);
+  setTimeout(() => { if (toast.parentNode) toast.remove(); }, 2000);
+}
+
+function setLsQty(n, el) {
+  lsQty = n;
+  document.querySelectorAll('.ls-qty-btn').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.getElementById('ls-qty-custom').value = n;
+}
+
+function setLsQtyCustom(v) {
+  lsQty = parseInt(v) || 1;
+  document.querySelectorAll('.ls-qty-btn').forEach(b => b.classList.remove('active'));
+}
+
+function setLsType(type, el) {
+  lsType = type;
+  document.getElementById('ls-type-now').classList.toggle('active', type === '現股');
+  document.getElementById('ls-type-day').classList.toggle('active', type === '當沖');
+}
+
+// 進入閃電下單頁時初始化
+const _origMobOpenPage = typeof mobOpenPage === 'function' ? mobOpenPage : null;
+
 function cancelOrder(id) {
   showToast('撤單', '已送出撤單請求 ' + (id||''), 'warn');
 }
@@ -2488,31 +2774,71 @@ document.addEventListener('DOMContentLoaded', () => {
   <div class="mob-page" id="mob-stock-lightning">
     <div class="mob-page-header">
       <button class="mob-back-btn" onclick="mobBack()">‹</button>
-      <div class="mob-page-title">⚡ 證券閃電下單</div>
-      <span class="badge badge-warn" style="margin-left:auto">高速模式</span>
+      <div>
+        <div style="font-size:14px;font-weight:700" id="ls-sym-title">2330 台積電</div>
+        <div style="font-size:10px;color:var(--text-muted)">買賣現沖</div>
+      </div>
+      <button onclick="openSymbolSearch('lightning')" style="margin-left:auto;background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);color:var(--text-primary);font-size:12px;padding:5px 10px;cursor:pointer">搜尋</button>
     </div>
-    <div class="mob-page-body">
-      <div style="background:var(--warn-bg);border:1px solid rgba(255,170,0,.2);border-radius:var(--radius);padding:10px 12px;font-size:12px;color:var(--warn)">⚡ 閃電模式：一鍵送單，風控仍強制執行</div>
-      <div class="mob-price-bar">
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">2330 台積電</div>
-        <div class="mob-price-main up">948.0</div>
+
+    <!-- 張數快選 + 種類 -->
+    <div style="background:var(--bg-secondary);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0">
+      <span style="font-size:11px;color:var(--text-muted);flex-shrink:0">張數</span>
+      <div style="display:flex;gap:6px" id="ls-qty-group">
+        <button class="ls-qty-btn active" onclick="setLsQty(1,this)">1</button>
+        <button class="ls-qty-btn" onclick="setLsQty(3,this)">3</button>
+        <button class="ls-qty-btn" onclick="setLsQty(5,this)">5</button>
+        <input type="number" id="ls-qty-custom" value="1" min="1"
+          style="width:44px;background:var(--bg-card);border:1px solid var(--border-light);border-radius:6px;color:var(--text-primary);font-family:var(--mono);font-size:13px;font-weight:700;padding:4px 6px;text-align:center;outline:none"
+          oninput="setLsQtyCustom(this.value)">
       </div>
-      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">預設張數</div>
-      <div class="seg-group">
-        <button class="seg-btn active" onclick="setSeg(this)">1張</button>
-        <button class="seg-btn" onclick="setSeg(this)">5張</button>
-        <button class="seg-btn" onclick="setSeg(this)">10張</button>
+      <div style="margin-left:auto;display:flex;gap:4px">
+        <button class="seg-btn active" id="ls-type-now" onclick="setLsType('現股',this)" style="font-size:11px;padding:3px 8px">現股</button>
+        <button class="seg-btn" id="ls-type-day" onclick="setLsType('當沖',this)" style="font-size:11px;padding:3px 8px">當沖</button>
       </div>
-      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">價格偏移</div>
-      <div class="seg-group">
-        <button class="seg-btn active" onclick="setSeg(this)">市價</button>
-        <button class="seg-btn" onclick="setSeg(this)">+1檔</button>
-        <button class="seg-btn" onclick="setSeg(this)">-1檔</button>
+    </div>
+
+    <!-- 五檔 + 下單主體 -->
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+
+      <!-- 欄位標題 -->
+      <div style="display:grid;grid-template-columns:1fr 80px 1fr;background:var(--bg-tertiary);border-bottom:1px solid var(--border);flex-shrink:0">
+        <div style="padding:6px 10px;font-size:11px;font-weight:600;color:var(--up);text-align:center">買進量</div>
+        <div style="padding:6px 4px;font-size:11px;font-weight:600;color:var(--text-secondary);text-align:center">價格</div>
+        <div style="padding:6px 10px;font-size:11px;font-weight:600;color:var(--down);text-align:center">賣出量</div>
       </div>
-      <div class="mob-lightning-wrap">
-        <button class="mob-lightning-btn" style="background:var(--up);color:#fff" onclick="showToast('⚡ 閃電買進','委託已送出','success')">▲ 買進</button>
-        <button class="mob-lightning-btn" style="background:var(--down);color:#000" onclick="showToast('⚡ 閃電賣出','委託已送出','warn')">▼ 賣出</button>
+
+      <!-- 價格板 (15檔) -->
+      <div style="flex:1;overflow-y:auto" id="ls-price-board"></div>
+
+      <!-- 底部資訊列 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;background:var(--bg-secondary);border-top:1px solid var(--border);flex-shrink:0;padding:6px 0">
+        <div style="text-align:center">
+          <div style="font-size:9px;color:var(--text-muted)">委買張</div>
+          <div style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--up)" id="ls-total-buy">5,937</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:9px;color:var(--text-muted)">昨收</div>
+          <div style="font-family:var(--mono);font-size:12px" id="ls-ref-price">950.0</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:9px;color:var(--text-muted)">現價</div>
+          <div style="font-family:var(--mono);font-size:13px;font-weight:700" id="ls-last-price">948.0</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:9px;color:var(--text-muted)">漲跌</div>
+          <div style="font-family:var(--mono);font-size:12px;color:var(--up)" id="ls-chg">-2.0</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-size:9px;color:var(--text-muted)">委賣張</div>
+          <div style="font-family:var(--mono);font-size:12px;font-weight:600;color:var(--down)" id="ls-total-sell">2,246</div>
+        </div>
       </div>
+    </div>
+
+    <!-- 下單提示 -->
+    <div style="padding:6px 14px;background:var(--bg-tertiary);border-top:1px solid var(--border);font-size:10px;color:var(--text-muted);flex-shrink:0">
+      ⚡ 點價格列直接送單 · 紅列買進 · 綠列賣出 · 無需二次確認
     </div>
   </div>
 
