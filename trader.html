@@ -195,6 +195,15 @@ body{display:flex;flex-direction:column;overflow:hidden}
   .content-area { display: none !important; }
   .main-wrap { display: none !important; }
 
+  /* 手機版 topbar 簡化：隱藏交易員資訊和閃電按鈕 */
+  #traderTypeBadge { display: none !important; }
+  #traderName { display: none !important; }
+  #lightningBtn { display: none !important; }
+  .topbar > div[style*="width:1px"] { display: none !important; }
+  .topbar > span[style*="交易員"] { display: none !important; }
+  /* 隱藏分隔線和交易員文字 */
+  .topbar-divider { display: none !important; }
+
   /* 顯示手機版 UI */
   #mobileUI { display: flex !important; }
 
@@ -505,7 +514,7 @@ body{display:flex;flex-direction:column;overflow:hidden}
 <!-- TOPBAR -->
 <div class="topbar">
   <a class="topbar-logo" href="index.html">⚡ <span style="font-size:13px">TRS</span></a>
-  <div style="width:1px;height:20px;background:var(--border)"></div>
+  <div class="topbar-divider" style="width:1px;height:20px;background:var(--border)"></div>
   <span style="font-size:12px;color:var(--text-muted)">交易員下單介面</span>
   <div style="display:flex;align-items:center;gap:6px;margin-left:8px">
     <span class="badge badge-warn" id="traderTypeBadge">丙種</span>
@@ -2117,6 +2126,148 @@ function renderMobQuery(qid) {
 }
 
 
+
+// ── 商品搜尋系統 ──
+const stockDB = [
+  {code:'2330', name:'台積電', price:948.0},
+  {code:'2317', name:'鴻海',   price:178.5},
+  {code:'2454', name:'聯發科', price:1020},
+  {code:'2882', name:'國泰金', price:62.0},
+  {code:'2881', name:'富邦金', price:88.5},
+  {code:'2886', name:'兆豐金', price:42.3},
+  {code:'2891', name:'中信金', price:36.8},
+  {code:'2412', name:'中華電', price:124.0},
+  {code:'2308', name:'台達電', price:298.0},
+  {code:'2382', name:'廣達',   price:285.0},
+  {code:'2303', name:'聯電',   price:48.5},
+  {code:'2002', name:'中鋼',   price:28.4},
+  {code:'1301', name:'台塑',   price:82.3},
+  {code:'1303', name:'南亞',   price:65.1},
+  {code:'2207', name:'和泰車', price:485.0},
+  {code:'3711', name:'日月光投控', price:148.0},
+  {code:'2345', name:'智邦',   price:382.0},
+  {code:'6505', name:'台塑化', price:72.6},
+  {code:'5871', name:'中租控股', price:198.0},
+  {code:'2379', name:'瑞昱',   price:520.0},
+];
+
+// 最近使用（預設10筆）
+let recentSymbols = [
+  {code:'2330', name:'台積電', price:948.0},
+  {code:'2317', name:'鴻海',   price:178.5},
+  {code:'2454', name:'聯發科', price:1020},
+  {code:'2882', name:'國泰金', price:62.0},
+  {code:'2412', name:'中華電', price:124.0},
+  {code:'2308', name:'台達電', price:298.0},
+  {code:'2303', name:'聯電',   price:48.5},
+  {code:'3711', name:'日月光投控', price:148.0},
+  {code:'2345', name:'智邦',   price:382.0},
+  {code:'2379', name:'瑞昱',   price:520.0},
+];
+
+function openSymbolSearch() {
+  const modal = document.getElementById('mob-symbol-modal');
+  modal.style.display = 'flex';
+  modal.style.flexDirection = 'column';
+  renderRecentList();
+  setTimeout(() => {
+    const inp = document.getElementById('mob-symbol-input');
+    if (inp) { inp.value = ''; inp.focus(); }
+  }, 100);
+}
+
+function closeSymbolSearch() {
+  document.getElementById('mob-symbol-modal').style.display = 'none';
+}
+
+function renderRecentList() {
+  const el = document.getElementById('mob-recent-list');
+  if (!el) return;
+  el.innerHTML = recentSymbols.slice(0,10).map(s => `
+    <div onclick="selectSymbol('${s.code}','${s.name}',${s.price})"
+      style="display:flex;align-items:center;gap:8px;padding:8px 12px;
+        background:var(--bg-card);border:1px solid var(--border);
+        border-radius:var(--radius);cursor:pointer;min-width:140px;flex:1">
+      <div>
+        <div style="font-family:var(--mono);font-size:14px;font-weight:700;color:var(--text-primary)">${s.code}</div>
+        <div style="font-size:11px;color:var(--text-muted)">${s.name}</div>
+      </div>
+      <div style="margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--text-secondary)">${s.price}</div>
+    </div>
+  `).join('');
+}
+
+function filterSymbols(q) {
+  const recentSec = document.getElementById('mob-recent-section');
+  const resultsSec = document.getElementById('mob-search-results');
+  if (!q || q.length === 0) {
+    recentSec.style.display = '';
+    resultsSec.style.display = 'none';
+    return;
+  }
+  recentSec.style.display = 'none';
+  resultsSec.style.display = '';
+  const matched = stockDB.filter(s =>
+    s.code.includes(q) || s.name.includes(q)
+  );
+  if (matched.length === 0) {
+    resultsSec.innerHTML = `
+      <div style="padding:40px;text-align:center;color:var(--text-muted)">
+        <div style="font-size:32px;margin-bottom:8px">🔍</div>
+        <div>找不到「${q}」</div>
+        <div style="font-size:11px;margin-top:4px">請確認代號或名稱</div>
+      </div>`;
+    return;
+  }
+  resultsSec.innerHTML = matched.map(s => `
+    <div onclick="selectSymbol('${s.code}','${s.name}',${s.price})"
+      style="display:flex;align-items:center;padding:14px 16px;
+        border-bottom:1px solid var(--border);cursor:pointer"
+      onmouseenter="this.style.background='var(--bg-hover)'"
+      onmouseleave="this.style.background=''">
+      <div style="flex:1">
+        <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--text-primary)">${s.code}</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px">${s.name}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:var(--mono);font-size:15px;font-weight:600;color:var(--text-primary)">${s.price}</div>
+        <div style="font-size:10px;color:var(--text-muted)">TWD</div>
+      </div>
+      <div style="margin-left:12px;color:var(--text-muted);font-size:18px">›</div>
+    </div>
+  `).join('');
+}
+
+function selectSymbol(code, name, price) {
+  // 更新選中的商品顯示
+  const symEl = document.getElementById('mob-selected-symbol');
+  const nameEl = document.getElementById('mob-selected-name');
+  const barName = document.getElementById('mob-price-bar-name');
+  if (symEl) symEl.textContent = code;
+  if (nameEl) nameEl.textContent = name;
+  if (barName) barName.textContent = code + ' ' + name;
+
+  // 更新價格顯示
+  const priceEl = document.querySelector('#mob-stock-order .mob-price-main');
+  if (priceEl) priceEl.textContent = price.toFixed(1);
+
+  // 更新價格輸入框
+  const priceInput = document.getElementById('mob-s-price');
+  if (priceInput) priceInput.value = price;
+
+  // 加入最近使用（去重，保留最多10個）
+  recentSymbols = recentSymbols.filter(s => s.code !== code);
+  recentSymbols.unshift({code, name, price});
+  if (recentSymbols.length > 10) recentSymbols = recentSymbols.slice(0,10);
+
+  closeSymbolSearch();
+  showToast(code + ' ' + name, '價格 ' + price, 'success');
+}
+
+function mobToggleLightning() {
+  showToast('⚡ 閃電模式', '已切換', 'warn');
+}
+
 function cancelOrder(id) {
   showToast('撤單', '已送出撤單請求 ' + (id||''), 'warn');
 }
@@ -2229,13 +2380,48 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="mob-page-header">
       <button class="mob-back-btn" onclick="mobBack()">‹</button>
       <div class="mob-page-title">證券下單</div>
-      <div style="margin-left:auto">
-        <input style="background:var(--bg-tertiary);border:1px solid var(--border-light);border-radius:var(--radius);color:var(--text-primary);font-family:var(--mono);font-size:13px;font-weight:600;padding:5px 8px;outline:none;width:80px" value="2330" placeholder="代號">
+      <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+        <button class="lightning-btn on" id="mob-lightning-toggle" onclick="mobToggleLightning()" style="padding:4px 8px;font-size:11px">⚡ 閃電</button>
       </div>
     </div>
+
+    <!-- 商品搜尋欄 -->
+    <div style="padding:10px 14px;background:var(--bg-secondary);border-bottom:1px solid var(--border);position:relative">
+      <div style="display:flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:8px 12px" onclick="openSymbolSearch()">
+        <span style="font-size:14px">🔍</span>
+        <span id="mob-selected-symbol" style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--text-primary)">2330</span>
+        <span id="mob-selected-name" style="font-size:12px;color:var(--text-muted)">台積電</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--text-muted)">點擊選擇商品 ›</span>
+      </div>
+    </div>
+
+    <!-- 商品搜尋 Modal -->
+    <div id="mob-symbol-modal" style="display:none;position:fixed;inset:0;z-index:500;background:var(--bg-primary);flex-direction:column">
+      <div style="padding:12px 14px;background:var(--bg-secondary);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
+        <button onclick="closeSymbolSearch()" style="background:none;border:none;color:var(--accent);font-size:22px;cursor:pointer;padding:0">‹</button>
+        <div style="flex:1;display:flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid var(--accent);border-radius:var(--radius);padding:8px 12px">
+          <span style="font-size:14px;color:var(--text-muted)">🔍</span>
+          <input id="mob-symbol-input" type="tel" placeholder="輸入股票代號或名稱"
+            style="flex:1;background:none;border:none;color:var(--text-primary);font-family:var(--mono);font-size:16px;font-weight:600;outline:none"
+            oninput="filterSymbols(this.value)"
+            autofocus>
+          <button onclick="document.getElementById('mob-symbol-input').value='';filterSymbols('')" style="background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer">✕</button>
+        </div>
+      </div>
+
+      <!-- 最近使用 -->
+      <div id="mob-recent-section" style="padding:10px 14px">
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px">最近使用</div>
+        <div id="mob-recent-list" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+      </div>
+
+      <!-- 搜尋結果 -->
+      <div id="mob-search-results" style="flex:1;overflow-y:auto;display:none"></div>
+    </div>
+
     <div class="mob-page-body">
       <div class="mob-price-bar">
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">2330 台積電</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px" id="mob-price-bar-name">2330 台積電</div>
         <div style="display:flex;align-items:baseline;gap:10px">
           <div class="mob-price-main up">948.0</div>
           <div class="mono up" style="font-size:13px">▼ 2.0 (-0.21%)</div>
