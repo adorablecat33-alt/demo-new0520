@@ -350,10 +350,11 @@ body{display:flex;flex-direction:column;overflow:hidden}
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 14px;
+  padding: 8px 12px;
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
+  min-height: 44px;
 }
 .mob-back-btn {
   background: none;
@@ -377,83 +378,6 @@ body{display:flex;flex-direction:column;overflow:hidden}
 }
 
 /* 手機下單表單 */
-.mob-price-bar {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 12px 14px;
-}
-.mob-price-main {
-  font-family: var(--mono);
-  font-size: 28px;
-  font-weight: 700;
-}
-.mob-dir-btns {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.mob-dir-btn {
-  padding: 14px;
-  border: 1px solid;
-  border-radius: var(--radius);
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  letter-spacing: 1px;
-  font-family: var(--sans);
-  transition: all .15s;
-}
-.mob-form-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.mob-form-label {
-  font-size: 12px;
-  color: var(--text-muted);
-  width: 40px;
-  flex-shrink: 0;
-}
-.mob-form-input {
-  flex: 1;
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  color: var(--text-primary);
-  font-family: var(--mono);
-  font-size: 16px;
-  font-weight: 600;
-  padding: 10px 12px;
-  outline: none;
-  text-align: right;
-}
-.mob-form-input:focus { border-color: var(--accent); }
-.mob-step-btn {
-  width: 40px;
-  height: 40px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius);
-  color: var(--text-primary);
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.mob-submit-btn {
-  padding: 16px;
-  border: none;
-  border-radius: var(--radius-lg);
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  letter-spacing: 2px;
-  font-family: var(--sans);
-  width: 100%;
-}
 
 /* 手機查詢頁 */
 .mob-summary-grid {
@@ -490,21 +414,6 @@ body{display:flex;flex-direction:column;overflow:hidden}
 .mob-list-title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
 
 /* 閃電模式大按鈕 */
-.mob-lightning-wrap {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 8px;
-}
-.mob-lightning-btn {
-  padding: 40px 0;
-  border: none;
-  border-radius: var(--radius-lg);
-  font-size: 22px;
-  font-weight: 700;
-  cursor: pointer;
-  letter-spacing: 2px;
-}
 }
 
 
@@ -611,6 +520,93 @@ body{display:flex;flex-direction:column;overflow:hidden}
   from { transform: translate(-50%,-50%) scale(.85); opacity:0; }
   to   { transform: translate(-50%,-50%) scale(1);   opacity:1; }
 }
+
+
+/* ── 期貨下單 ── */
+.fo-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-secondary);
+}
+.fo-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  width: 36px;
+  flex-shrink: 0;
+  font-weight: 500;
+}
+.fo-seg-group {
+  display: flex;
+  gap: 4px;
+}
+.fo-seg {
+  padding: 7px 10px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .12s;
+  font-family: var(--sans);
+  white-space: nowrap;
+}
+.fo-seg:hover { color: var(--text-primary); }
+.fo-seg.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.fo-dir-btn {
+  padding: 8px 16px;
+  border: 1px solid;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: all .12s;
+  min-width: 60px;
+}
+.fo-buy {
+  border-color: rgba(255,64,96,.4);
+  background: rgba(255,64,96,.1);
+  color: var(--up);
+}
+.fo-buy.active { background: var(--up); color: #fff; border-color: var(--up); }
+.fo-sell {
+  border-color: rgba(0,212,160,.4);
+  background: rgba(0,212,160,.1);
+  color: var(--down);
+}
+.fo-sell.active { background: var(--down); color: #000; border-color: var(--down); }
+.fo-step-btn {
+  width: 44px; height: 44px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 22px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background .1s;
+}
+.fo-step-btn:active { background: var(--bg-hover); }
+.fo-book-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 60px 1fr 1fr;
+  padding: 7px 8px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  cursor: pointer;
+  transition: background .1s;
+}
+.fo-book-row:active { background: var(--bg-hover); }
+.fo-book-row.highlight { background: rgba(255,170,0,.08); }
 
 </style>
 </head>
@@ -1975,6 +1971,12 @@ function mobOpenPage(id, label, page, qid) {
   if (page === 'mob-futures-lightning') {
     setTimeout(initLightningFutures, 50);
   }
+  if (page === 'mob-futures-order') {
+    setTimeout(initFuturesOrder, 50);
+  }
+  if (page === 'mob-stock-order') {
+    setTimeout(initStockOrder, 50);
+  }
   document.querySelectorAll('.mob-page').forEach(p => p.classList.remove('active'));
   document.querySelector('.mob-market-tabs').style.display = 'none';
   document.querySelector('.mob-acc-bar').style.display = 'none';
@@ -2715,6 +2717,265 @@ function setLfProduct(p, el) {
   renderLfPriceBoard();
 }
 
+
+// ── 期貨下單 JS ──
+let foDir = 'buy';
+let foProduct = '台指';
+let foMonths = ['202606','202609','202612','202703'];
+let foMonthIdx = 0;
+
+function foSetSeg(groupId, el) {
+  document.querySelectorAll('#' + groupId + ' .fo-seg').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function foSetDir(dir) {
+  foDir = dir;
+  document.getElementById('fo-dir-buy').classList.toggle('active', dir === 'buy');
+  document.getElementById('fo-dir-sell').classList.toggle('active', dir === 'sell');
+  const btn = document.getElementById('fo-submit-btn');
+  if (btn) {
+    btn.textContent = dir === 'buy' ? '買進' : '賣出';
+    btn.style.background = dir === 'buy' ? 'var(--up)' : 'var(--down)';
+    btn.style.color = dir === 'buy' ? '#fff' : '#000';
+  }
+}
+
+function foUpdateProduct(p) {
+  foProduct = p;
+  const prices = {台指:40240, 小台:40240, 電子:500, 金融:1020};
+  const el = document.getElementById('fo-price');
+  if (el && prices[p]) { el.value = prices[p]; foCalcEst(); }
+  renderFoOrderBook();
+}
+
+function cycleMonth() {
+  foMonthIdx = (foMonthIdx + 1) % foMonths.length;
+  document.getElementById('fo-month-btn').textContent = foMonths[foMonthIdx];
+}
+
+function foStep(id, d) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const v = parseFloat(el.value) || 0;
+  el.value = Math.max(1, v + d);
+  foCalcEst();
+}
+
+function foSetSingle(el) {
+  el.parentElement.querySelectorAll('.fo-seg').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function foCalcEst() {
+  const qty = parseInt(document.getElementById('fo-qty').value) || 1;
+  const margin = document.getElementById('fo-est-margin');
+  if (margin) margin.textContent = (qty * 184000).toLocaleString();
+}
+
+function renderFoOrderBook() {
+  const book = document.getElementById('fo-order-book');
+  if (!book) return;
+  const base = parseInt(document.getElementById('fo-price') && document.getElementById('fo-price').value) || 40240;
+  const ref = 40965;
+
+  book.innerHTML = '';
+  let totalBuy = 0, totalSell = 0;
+
+  for (var i = 4; i >= 0; i--) {
+    var buyP  = base - i - 1;
+    var sellP = base + i;
+    var buyV  = Math.floor(Math.random() * 5 + 1);
+    var sellV = Math.floor(Math.random() * 5 + 1);
+    var buyChg  = buyP - ref;
+    var sellChg = sellP - ref;
+    var isHL = (i === 0);
+    totalBuy += buyV;
+    totalSell += sellV;
+
+    var row = document.createElement('div');
+    row.className = 'fo-book-row' + (isHL ? ' highlight' : '');
+    (function(bp) {
+      row.onclick = function() {
+        var el = document.getElementById('fo-price');
+        if (el) { el.value = bp; foCalcEst(); }
+      };
+    })(buyP);
+
+    row.innerHTML =
+      '<span style="font-family:var(--mono);font-size:13px;color:var(--up);text-align:right">' + buyV + '</span>' +
+      '<span style="font-family:var(--mono);font-size:13px;color:var(--up);text-align:right">' + buyP.toLocaleString() + '</span>' +
+      '<span style="font-family:var(--mono);font-size:11px;color:var(--text-muted);text-align:center">' + (buyChg >= 0 ? '+' : '') + buyChg + '</span>' +
+      '<span style="font-family:var(--mono);font-size:13px;color:var(--down)">' + sellP.toLocaleString() + '</span>' +
+      '<span style="font-family:var(--mono);font-size:13px;color:var(--down)">' + sellV + '</span>';
+
+    book.appendChild(row);
+  }
+
+  var tb = document.getElementById('fo-total-buy');
+  var ts = document.getElementById('fo-total-sell');
+  if (tb) tb.textContent = '(' + totalBuy + ')';
+  if (ts) ts.textContent = '(' + totalSell + ')';
+}
+
+function foSubmitOrder() {
+  const qty = document.getElementById('fo-qty').value || '1';
+  const price = document.getElementById('fo-price').value || '40240';
+  const dirLabel = foDir === 'buy' ? '買進' : '賣出';
+  const color = foDir === 'buy' ? '#ff4060' : '#00d4a0';
+
+  // 浮動視窗
+  const old = document.getElementById('fo-submit-toast');
+  if (old) old.remove();
+  const toast = document.createElement('div');
+  toast.id = 'fo-submit-toast';
+  toast.style.cssText = [
+    'position:fixed','top:50%','left:50%',
+    'transform:translate(-50%,-50%)',
+    'background:#1b2235',
+    'border:1px solid #2e3a52',
+    'border-top:4px solid ' + color,
+    'border-radius:16px',
+    'padding:20px 32px',
+    'text-align:center',
+    'z-index:9999',
+    'box-shadow:0 12px 48px rgba(0,0,0,.8)',
+    'min-width:220px',
+    'animation:ls-toast-in .18s ease'
+  ].join(';');
+  toast.innerHTML =
+    '<div style="font-size:28px;margin-bottom:8px">' + (foDir === 'buy' ? '🔴' : '🟢') + '</div>' +
+    '<div style="font-size:18px;font-weight:700;color:' + color + ';margin-bottom:6px">' + dirLabel + ' 委託送出 ✓</div>' +
+    '<div style="font-family:JetBrains Mono,monospace;font-size:22px;font-weight:800;color:#e6eaf4;margin-bottom:8px">' + foProduct + ' ' + foMonths[foMonthIdx] + '</div>' +
+    '<div style="font-size:14px;color:#8892aa">' + qty + ' 口 &times; <span style="font-family:JetBrains Mono,monospace;font-weight:700;color:#e6eaf4">' + parseInt(price).toLocaleString() + '</span></div>' +
+    '<div style="font-size:11px;color:#4d5a74;margin-top:6px">期貨 · 限價下單</div>';
+  document.body.appendChild(toast);
+  setTimeout(function() { if (toast.parentNode) toast.remove(); }, 2200);
+}
+
+function initFuturesOrder() {
+  renderFoOrderBook();
+  setInterval(renderFoOrderBook, 3000);
+}
+
+
+// ── 證券下單 JS ──
+let soDir = 'buy';
+let soSymbol = '2330';
+let soName = '台積電';
+let soPrice = 948.0;
+
+function soSetDir(dir) {
+  soDir = dir;
+  document.getElementById('so-dir-buy').classList.toggle('active', dir === 'buy');
+  document.getElementById('so-dir-sell').classList.toggle('active', dir === 'sell');
+  const btn = document.getElementById('so-submit-btn');
+  if (btn) {
+    btn.textContent = dir === 'buy' ? '買進下單' : '賣出下單';
+    btn.style.background = dir === 'buy' ? 'var(--up)' : 'var(--down)';
+    btn.style.color = dir === 'buy' ? '#fff' : '#000';
+  }
+}
+
+function soCalcEst() {
+  const qty = parseInt(document.getElementById('mob-s-qty')?.value) || 1;
+  const price = parseFloat(document.getElementById('mob-s-price')?.value) || 0;
+  const amt = qty * price * 1000;
+  const fee = Math.max(20, Math.round(amt * 0.001425 * 0.6));
+  const amtEl = document.getElementById('so-est-amt');
+  const feeEl = document.getElementById('so-est-fee');
+  if (amtEl) amtEl.textContent = amt.toLocaleString();
+  if (feeEl) feeEl.textContent = '~' + fee.toLocaleString();
+}
+
+function renderSoOrderBook() {
+  const book = document.getElementById('so-order-book');
+  if (!book) return;
+  const base = parseFloat(document.getElementById('mob-s-price')?.value) || 948.0;
+  const ref = 950.0;
+
+  book.innerHTML = '';
+  let totalBuy = 0, totalSell = 0;
+
+  for (var i = 4; i >= 0; i--) {
+    var buyP  = Math.round((base - (i + 1) * 0.5) * 10) / 10;
+    var sellP = Math.round((base + i * 0.5) * 10) / 10;
+    var buyV  = Math.floor(Math.random() * 2000 + 100);
+    var sellV = Math.floor(Math.random() * 2000 + 100);
+    var buyChg  = (buyP - ref).toFixed(1);
+    var sellChg = (sellP - ref).toFixed(1);
+    var isHL = (i === 0);
+    totalBuy += buyV;
+    totalSell += sellV;
+
+    var row = document.createElement('div');
+    row.className = 'fo-book-row' + (isHL ? ' highlight' : '');
+    (function(bp) {
+      row.onclick = function() {
+        var el = document.getElementById('mob-s-price');
+        if (el) { el.value = bp; soCalcEst(); }
+      };
+    })(buyP);
+
+    row.innerHTML =
+      '<span style="font-family:var(--mono);font-size:13px;color:var(--up);text-align:right">' + buyV.toLocaleString() + '</span>' +
+      '<span style="font-family:var(--mono);font-size:13px;color:var(--up);text-align:right">' + buyP.toFixed(1) + '</span>' +
+      '<span style="font-family:var(--mono);font-size:11px;color:var(--text-muted);text-align:center">' + (parseFloat(buyChg) >= 0 ? '+' : '') + buyChg + '</span>' +
+      '<span style="font-family:var(--mono);font-size:13px;color:var(--down)">' + sellP.toFixed(1) + '</span>' +
+      '<span style="font-family:var(--mono);font-size:13px;color:var(--down)">' + sellV.toLocaleString() + '</span>';
+
+    book.appendChild(row);
+  }
+
+  var tb = document.getElementById('so-total-buy');
+  var ts = document.getElementById('so-total-sell');
+  if (tb) tb.textContent = '買 ' + totalBuy.toLocaleString();
+  if (ts) ts.textContent = '賣 ' + totalSell.toLocaleString();
+}
+
+function soSubmitOrder() {
+  const qty = document.getElementById('mob-s-qty').value || '1';
+  const price = document.getElementById('mob-s-price').value || soPrice;
+  const dirLabel = soDir === 'buy' ? '買進' : '賣出';
+  const color = soDir === 'buy' ? '#ff4060' : '#00d4a0';
+  const sym = document.getElementById('mob-selected-symbol')?.textContent || soSymbol;
+  const name = document.getElementById('mob-selected-name')?.textContent || soName;
+
+  const old = document.getElementById('so-submit-toast');
+  if (old) old.remove();
+  const toast = document.createElement('div');
+  toast.id = 'so-submit-toast';
+  toast.style.cssText = [
+    'position:fixed','top:50%','left:50%',
+    'transform:translate(-50%,-50%)',
+    'background:#1b2235',
+    'border:1px solid #2e3a52',
+    'border-top:4px solid ' + color,
+    'border-radius:16px',
+    'padding:20px 32px',
+    'text-align:center',
+    'z-index:9999',
+    'box-shadow:0 12px 48px rgba(0,0,0,.8)',
+    'min-width:220px',
+    'animation:ls-toast-in .18s ease'
+  ].join(';');
+  toast.innerHTML =
+    '<div style="font-size:28px;margin-bottom:8px">' + (soDir === 'buy' ? '🔴' : '🟢') + '</div>' +
+    '<div style="font-size:18px;font-weight:700;color:' + color + ';margin-bottom:6px">' + dirLabel + ' 委託送出 ✓</div>' +
+    '<div style="font-family:JetBrains Mono,monospace;font-size:22px;font-weight:800;color:#e6eaf4;margin-bottom:8px">' + sym + ' ' + name + '</div>' +
+    '<div style="font-size:14px;color:#8892aa">' + qty + ' 張 &times; <span style="font-family:JetBrains Mono,monospace;font-weight:700;color:#e6eaf4">' + price + '</span></div>' +
+    '<div style="font-size:11px;color:#4d5a74;margin-top:6px">證券 · 限價下單</div>';
+  document.body.appendChild(toast);
+  setTimeout(function() { if (toast.parentNode) toast.remove(); }, 2200);
+}
+
+function initStockOrder() {
+  renderSoOrderBook();
+  if (window._soBookInterval) clearInterval(window._soBookInterval);
+  window._soBookInterval = setInterval(renderSoOrderBook, 3000);
+  soCalcEst();
+}
+
 function cancelOrder(id) {
   showToast('撤單', '已送出撤單請求 ' + (id||''), 'warn');
 }
@@ -2824,111 +3085,182 @@ document.addEventListener('DOMContentLoaded', () => {
 
   <!-- 手機下單頁 (證券) -->
   <div class="mob-page" id="mob-stock-order">
-    <div class="mob-page-header">
-      <button class="mob-back-btn" onclick="mobBack()">‹</button>
-      <div class="mob-page-title">證券下單</div>
-      <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
-        <button class="lightning-btn on" id="mob-lightning-toggle" onclick="mobToggleLightning()" style="padding:4px 8px;font-size:11px">⚡ 閃電</button>
+    <!-- Header -->
+    <div class="mob-page-header" style="flex-direction:column;align-items:stretch;padding:0;height:auto">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px">
+        <button class="mob-back-btn" onclick="mobBack()">‹</button>
+        <div style="flex:1">
+          <div style="font-size:13px;color:var(--text-muted)">證券交易</div>
+          <div style="font-size:12px;color:var(--text-muted)">9A8F-0388939 永豐證券</div>
+        </div>
+        <button onclick="showToast('下單設定','功能建置中','info')"
+          style="background:none;border:1px solid var(--border-light);border-radius:var(--radius);color:var(--text-secondary);font-size:12px;padding:4px 10px;cursor:pointer">下單設定</button>
+      </div>
+      <!-- 委託/成交/刪改 Tab -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <button onclick="mobOpenPage('s-委託','證券-委託回報','','s-委託')"
+          style="padding:9px;background:none;border:none;border-right:1px solid var(--border);color:var(--gold);font-size:13px;font-weight:600;cursor:pointer">委託回報</button>
+        <button onclick="mobOpenPage('s-成交','證券-成交回報','','s-成交')"
+          style="padding:9px;background:none;border:none;border-right:1px solid var(--border);color:var(--gold);font-size:13px;font-weight:600;cursor:pointer">成交回報</button>
+        <button onclick="showToast('刪改','載入中','info')"
+          style="padding:9px;background:none;border:none;color:var(--gold);font-size:13px;font-weight:600;cursor:pointer">刪改</button>
       </div>
     </div>
 
-    <!-- 商品搜尋欄 -->
-    <div style="padding:10px 14px;background:var(--bg-secondary);border-bottom:1px solid var(--border);position:relative">
-      <div style="display:flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:8px 12px" onclick="openSymbolSearch()">
-        <span style="font-size:14px">🔍</span>
-        <span id="mob-selected-symbol" style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--text-primary)">2330</span>
-        <span id="mob-selected-name" style="font-size:12px;color:var(--text-muted)">台積電</span>
-        <span style="margin-left:auto;font-size:11px;color:var(--text-muted)">點擊選擇商品 ›</span>
+    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column">
+
+      <!-- 商品（保留搜尋功能） -->
+      <div class="fo-row" style="padding:10px 12px">
+        <span class="fo-label">商品</span>
+        <div onclick="openSymbolSearch()"
+          style="flex:1;display:flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);padding:8px 12px;cursor:pointer">
+          <span id="mob-selected-symbol" style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--text-primary)">2330</span>
+          <span id="mob-selected-name" style="font-size:13px;color:var(--text-muted)">台積電</span>
+          <span style="margin-left:auto;font-size:14px;color:var(--text-muted)">🔍</span>
+        </div>
+      </div>
+
+      <!-- 交易 -->
+      <div class="fo-row">
+        <span class="fo-label">交易</span>
+        <div class="fo-seg-group" id="so-trade-group" style="flex:1">
+          <button class="fo-seg active" onclick="foSetSeg('so-trade-group',this)">整股</button>
+          <button class="fo-seg" onclick="foSetSeg('so-trade-group',this)">盤後</button>
+          <button class="fo-seg" onclick="foSetSeg('so-trade-group',this)">盤後零股</button>
+        </div>
+      </div>
+
+      <!-- 種類 -->
+      <div class="fo-row">
+        <span class="fo-label">種類</span>
+        <div class="fo-seg-group" id="so-type-group" style="flex:1">
+          <button class="fo-seg active" onclick="foSetSeg('so-type-group',this)">現股</button>
+          <button class="fo-seg" onclick="foSetSeg('so-type-group',this)">融資</button>
+          <button class="fo-seg" onclick="foSetSeg('so-type-group',this)">融券</button>
+          <button class="fo-seg" onclick="foSetSeg('so-type-group',this)">當沖</button>
+        </div>
+      </div>
+
+      <!-- 條件 -->
+      <div class="fo-row">
+        <span class="fo-label">條件</span>
+        <div class="fo-seg-group" id="so-cond-group" style="flex:1">
+          <button class="fo-seg active" onclick="foSetSeg('so-cond-group',this)">ROD</button>
+          <button class="fo-seg" onclick="foSetSeg('so-cond-group',this)">IOC</button>
+          <button class="fo-seg" onclick="foSetSeg('so-cond-group',this)">FOK</button>
+        </div>
+      </div>
+
+      <!-- 類別（限價/市價/取價） -->
+      <div class="fo-row">
+        <span class="fo-label">類別</span>
+        <div class="fo-seg-group" id="so-price-type-group" style="flex:1">
+          <button class="fo-seg active" onclick="foSetSeg('so-price-type-group',this)">限價</button>
+          <button class="fo-seg" onclick="foSetSeg('so-price-type-group',this)">市價</button>
+          <button class="fo-seg" onclick="foSetSeg('so-price-type-group',this)">取價</button>
+        </div>
+      </div>
+
+      <!-- 買賣 -->
+      <div class="fo-row">
+        <span class="fo-label">買賣</span>
+        <div style="display:flex;gap:6px;flex:1">
+          <button id="so-dir-buy" class="fo-dir-btn fo-buy active" style="flex:1" onclick="soSetDir('buy')">買進</button>
+          <button id="so-dir-sell" class="fo-dir-btn fo-sell" style="flex:1" onclick="soSetDir('sell')">賣出</button>
+        </div>
+      </div>
+
+      <!-- 單位（張數） -->
+      <div class="fo-row">
+        <span class="fo-label">單位</span>
+        <input type="number" id="mob-s-qty" value="1" min="1"
+          style="flex:1;background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);color:var(--text-primary);font-family:var(--mono);font-size:20px;font-weight:700;padding:8px 12px;outline:none;text-align:center"
+          oninput="soCalcEst()">
+        <button class="fo-step-btn" onclick="foStep('mob-s-qty',-1)">−</button>
+        <button class="fo-step-btn" onclick="foStep('mob-s-qty',1)">+</button>
+      </div>
+
+      <!-- 價格 -->
+      <div class="fo-row">
+        <span class="fo-label">價格</span>
+        <input type="number" id="mob-s-price" value="948.0" step="0.1" placeholder="輸入價格"
+          style="flex:1;background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);color:var(--text-primary);font-family:var(--mono);font-size:20px;font-weight:700;padding:8px 12px;outline:none;text-align:center"
+          oninput="soCalcEst()">
+        <button class="fo-step-btn" onclick="foStep('mob-s-price',-0.5)">−</button>
+        <button class="fo-step-btn" onclick="foStep('mob-s-price',0.5)">+</button>
+      </div>
+
+      <!-- 商品標題 -->
+      <div style="padding:8px 14px;background:var(--bg-tertiary);font-size:12px;color:var(--text-secondary);font-weight:600;border-top:1px solid var(--border)" id="so-product-name">整股</div>
+
+      <!-- 五檔報價 -->
+      <div style="flex:1;overflow:hidden">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;padding:5px 12px;background:var(--bg-secondary);border-bottom:1px solid var(--border)">
+          <span style="font-size:11px;color:var(--up);text-align:right">買量</span>
+          <span style="font-size:11px;color:var(--up);text-align:right">買價</span>
+          <span style="font-size:9px;color:var(--text-muted);text-align:center">漲跌</span>
+          <span style="font-size:11px;color:var(--down);text-align:left">賣價</span>
+          <span style="font-size:11px;color:var(--down);text-align:left">賣量</span>
+        </div>
+        <div id="so-order-book" style="padding:0 4px"></div>
+        <!-- 買賣總計 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;padding:6px 14px;background:var(--bg-secondary);border-top:1px solid var(--border)">
+          <span style="font-size:13px;color:var(--up);font-family:var(--mono);font-weight:600" id="so-total-buy">買 6,821</span>
+          <span style="font-size:13px;color:var(--down);font-family:var(--mono);font-weight:600;text-align:right" id="so-total-sell">賣 5,415</span>
+        </div>
+      </div>
+
+      <!-- 預估 + 風控 -->
+      <div style="padding:6px 14px;background:var(--bg-card);border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted)">
+        <span>預估金額</span>
+        <span class="mono" id="so-est-amt">948,000</span>
+      </div>
+      <div style="padding:6px 14px;background:var(--bg-card);border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted)">
+        <span>手續費 (估)</span>
+        <span class="mono" id="so-est-fee">~810</span>
+      </div>
+      <div style="padding:6px 14px;background:var(--bg-card);border-top:1px solid var(--border);display:flex;flex-direction:column;gap:3px">
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:2px">Pre-Trade 風控</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span style="font-size:11px;color:var(--down)">✓ 交易員啟用</span>
+          <span style="font-size:11px;color:var(--down)">✓ 帳號正常</span>
+          <span style="font-size:11px;color:var(--down)">✓ 額度充足</span>
+          <span style="font-size:11px;color:var(--down)">✓ 未觸發熔斷</span>
+        </div>
       </div>
     </div>
 
-    <!-- 商品搜尋 Modal -->
-    <div id="mob-symbol-modal" style="display:none;position:fixed;inset:0;z-index:500;background:var(--bg-primary);flex-direction:column">
-      <div style="padding:12px 14px;background:var(--bg-secondary);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
-        <button onclick="closeSymbolSearch()" style="background:none;border:none;color:var(--accent);font-size:22px;cursor:pointer;padding:0">‹</button>
-        <div style="flex:1;display:flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid var(--accent);border-radius:var(--radius);padding:8px 12px">
-          <span style="font-size:14px;color:var(--text-muted)">🔍</span>
-          <input id="mob-symbol-input" type="tel" placeholder="輸入股票代號或名稱"
-            style="flex:1;background:none;border:none;color:var(--text-primary);font-family:var(--mono);font-size:16px;font-weight:600;outline:none"
-            oninput="filterSymbols(this.value)"
-            autofocus>
-          <button onclick="document.getElementById('mob-symbol-input').value='';filterSymbols('')" style="background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer">✕</button>
-        </div>
-      </div>
-
-      <!-- 最近使用 -->
-      <div id="mob-recent-section" style="padding:10px 14px">
-        <div style="font-size:11px;color:var(--text-muted);font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px">最近使用</div>
-        <div id="mob-recent-list" style="display:flex;flex-wrap:wrap;gap:8px"></div>
-      </div>
-
-      <!-- 搜尋結果 -->
-      <div id="mob-search-results" style="flex:1;overflow-y:auto;display:none"></div>
+    <!-- 下單 / 取消 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;flex-shrink:0">
+      <button id="so-submit-btn" onclick="soSubmitOrder()"
+        style="padding:18px;background:var(--up);border:none;color:#fff;font-size:18px;font-weight:700;cursor:pointer;letter-spacing:1px;transition:all .15s">
+        下單
+      </button>
+      <button onclick="showToast('已取消','','warn')"
+        style="padding:18px;background:var(--bg-card);border:none;border-left:1px solid var(--border);color:var(--text-secondary);font-size:18px;font-weight:600;cursor:pointer">
+        取消
+      </button>
     </div>
+  </div>
 
-    <div class="mob-page-body">
-      <div class="mob-price-bar">
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px" id="mob-price-bar-name">2330 台積電</div>
-        <div style="display:flex;align-items:baseline;gap:10px">
-          <div class="mob-price-main up">948.0</div>
-          <div class="mono up" style="font-size:13px">▼ 2.0 (-0.21%)</div>
-        </div>
-        <div style="display:flex;gap:14px;margin-top:6px">
-          <span style="font-size:12px;color:var(--text-muted)">買<span class="mono down" style="margin-left:4px">948.0</span></span>
-          <span style="font-size:12px;color:var(--text-muted)">賣<span class="mono up" style="margin-left:4px">949.0</span></span>
-          <span style="font-size:12px;color:var(--text-muted)">量<span class="mono" style="margin-left:4px">2,341</span></span>
-        </div>
-      </div>
-      <div>
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">交易類型</div>
-        <div class="seg-group">
-          <button class="seg-btn active" onclick="setSeg(this)">現股</button>
-          <button class="seg-btn" onclick="setSeg(this)">融資</button>
-          <button class="seg-btn" onclick="setSeg(this)">融券</button>
-          <button class="seg-btn" onclick="setSeg(this)">當沖</button>
-        </div>
-      </div>
-      <div>
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">委託類型</div>
-        <div class="seg-group">
-          <button class="seg-btn active" onclick="setSeg(this)">限價</button>
-          <button class="seg-btn" onclick="setSeg(this)">市價</button>
-          <button class="seg-btn" onclick="setSeg(this)">ROD</button>
-          <button class="seg-btn" onclick="setSeg(this)">IOC</button>
-          <button class="seg-btn" onclick="setSeg(this)">FOK</button>
-        </div>
-      </div>
-      <div class="mob-form-row">
-        <span class="mob-form-label">價格</span>
-        <button class="mob-step-btn" onclick="mobStep('mob-s-price',-1)">−</button>
-        <input class="mob-form-input" type="number" id="mob-s-price" value="948">
-        <button class="mob-step-btn" onclick="mobStep('mob-s-price',1)">+</button>
-      </div>
-      <div class="mob-form-row">
-        <span class="mob-form-label">張數</span>
-        <button class="mob-step-btn" onclick="mobStep('mob-s-qty',-1)">−</button>
-        <input class="mob-form-input" type="number" id="mob-s-qty" value="1" min="1">
-        <button class="mob-step-btn" onclick="mobStep('mob-s-qty',1)">+</button>
-      </div>
-      <div class="seg-group">
-        <button class="seg-btn" onclick="document.getElementById('mob-s-qty').value=1">1張</button>
-        <button class="seg-btn" onclick="document.getElementById('mob-s-qty').value=5">5張</button>
-        <button class="seg-btn" onclick="document.getElementById('mob-s-qty').value=10">10張</button>
-        <button class="seg-btn" onclick="document.getElementById('mob-s-qty').value=50">50張</button>
-      </div>
-      <!-- 風控 -->
-      <div class="risk-checklist">
-        <div style="font-size:10px;font-weight:600;color:var(--text-muted);margin-bottom:4px">Pre-Trade 風控</div>
-        <div class="rc-item"><span style="color:var(--down)">✓</span><span style="color:var(--text-secondary)">交易員啟用中</span></div>
-        <div class="rc-item"><span style="color:var(--down)">✓</span><span style="color:var(--text-secondary)">帳號正常 · 未鎖定</span></div>
-        <div class="rc-item"><span style="color:var(--down)">✓</span><span style="color:var(--text-secondary)">日損 28.3%（警戒 40%）</span></div>
-        <div class="rc-item"><span style="color:var(--down)">✓</span><span style="color:var(--text-secondary)">額度充足</span></div>
-      </div>
-      <div class="mob-dir-btns">
-        <button class="mob-dir-btn dir-buy active" style="border-color:rgba(255,64,96,.4);background:var(--up);color:#fff" onclick="mobSubmitOrder('stock','buy')">▲ 買進</button>
-        <button class="mob-dir-btn dir-sell" style="border-color:rgba(0,212,160,.4);background:var(--down);color:#000" onclick="mobSubmitOrder('stock','sell')">▼ 賣出</button>
+
+  <!-- 商品搜尋 Modal -->
+  <div id="mob-symbol-modal" style="display:none;position:fixed;inset:0;z-index:500;background:var(--bg-primary);flex-direction:column">
+    <div style="padding:12px 14px;background:var(--bg-secondary);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
+      <button onclick="closeSymbolSearch()" style="background:none;border:none;color:var(--accent);font-size:22px;cursor:pointer;padding:0">‹</button>
+      <div style="flex:1;display:flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid var(--accent);border-radius:var(--radius);padding:8px 12px">
+        <span style="font-size:14px;color:var(--text-muted)">🔍</span>
+        <input id="mob-symbol-input" type="tel" placeholder="輸入股票代號或名稱"
+          style="flex:1;background:none;border:none;color:var(--text-primary);font-family:var(--mono);font-size:16px;font-weight:600;outline:none"
+          oninput="filterSymbols(this.value)">
+        <button onclick="document.getElementById('mob-symbol-input').value='';filterSymbols('')" style="background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer">✕</button>
       </div>
     </div>
+    <div id="mob-recent-section" style="padding:10px 14px">
+      <div style="font-size:11px;color:var(--text-muted);font-weight:600;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px">最近使用</div>
+      <div id="mob-recent-list" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+    </div>
+    <div id="mob-search-results" style="flex:1;overflow-y:auto;display:none"></div>
   </div>
 
   <!-- 手機閃電下單 (證券) -->
@@ -3005,72 +3337,172 @@ document.addEventListener('DOMContentLoaded', () => {
 
   <!-- 手機下單頁 (期貨) -->
   <div class="mob-page" id="mob-futures-order">
-    <div class="mob-page-header">
-      <button class="mob-back-btn" onclick="mobBack()">‹</button>
-      <div class="mob-page-title">期貨下單</div>
-      <div style="margin-left:auto">
-        <input style="background:var(--bg-tertiary);border:1px solid var(--border-light);border-radius:var(--radius);color:var(--text-primary);font-family:var(--mono);font-size:13px;font-weight:600;padding:5px 8px;outline:none;width:90px" value="台指期066">
+    <!-- Header -->
+    <div class="mob-page-header" style="flex-direction:column;align-items:stretch;padding:0;height:auto">
+      <div style="display:flex;align-items:center;gap:10px;padding:10px 14px">
+        <button class="mob-back-btn" onclick="mobBack()">‹</button>
+        <div style="flex:1">
+          <div style="font-size:13px;color:var(--text-muted)">期貨交易</div>
+          <div style="font-size:12px;color:var(--text-muted)" id="fo-acc-label">永豐 期-台北3240627</div>
+        </div>
+        <button onclick="showToast('下單設定','功能建置中','info')"
+          style="background:none;border:1px solid var(--border-light);border-radius:var(--radius);color:var(--text-secondary);font-size:12px;padding:4px 10px;cursor:pointer">下單設定</button>
+      </div>
+      <!-- 委託/成交/刪改 Tab -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <button onclick="showToast('委託回報','載入中','info')"
+          style="padding:9px;background:none;border:none;border-right:1px solid var(--border);color:var(--gold);font-size:13px;font-weight:600;cursor:pointer">委託回報</button>
+        <button onclick="showToast('成交回報','載入中','info')"
+          style="padding:9px;background:none;border:none;border-right:1px solid var(--border);color:var(--gold);font-size:13px;font-weight:600;cursor:pointer">成交回報</button>
+        <button onclick="showToast('刪改','載入中','info')"
+          style="padding:9px;background:none;border:none;color:var(--gold);font-size:13px;font-weight:600;cursor:pointer">刪改</button>
       </div>
     </div>
-    <div class="mob-page-body">
-      <div class="mob-price-bar">
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">台指期 066</div>
-        <div style="display:flex;align-items:baseline;gap:10px">
-          <div class="mob-price-main up">40,240</div>
-          <div class="mono up" style="font-size:13px">▼ 725 (-1.77%)</div>
+
+    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column">
+
+      <!-- 商品選擇 -->
+      <div class="fo-row">
+        <span class="fo-label">商品</span>
+        <div style="display:flex;gap:6px;flex:1">
+          <div class="fo-seg-group" id="fo-product-group">
+            <button class="fo-seg active" onclick="foSetSeg('fo-product-group',this);foUpdateProduct(this.textContent)">台指</button>
+            <button class="fo-seg" onclick="foSetSeg('fo-product-group',this);foUpdateProduct(this.textContent)">小台</button>
+            <button class="fo-seg" onclick="foSetSeg('fo-product-group',this);foUpdateProduct(this.textContent)">電子</button>
+            <button class="fo-seg" onclick="foSetSeg('fo-product-group',this);foUpdateProduct(this.textContent)">金融</button>
+          </div>
         </div>
-        <div style="display:flex;gap:14px;margin-top:6px">
-          <span style="font-size:12px;color:var(--text-muted)">買<span class="mono down" style="margin-left:4px">40,240</span></span>
-          <span style="font-size:12px;color:var(--text-muted)">賣<span class="mono up" style="margin-left:4px">40,241</span></span>
-        </div>
-      </div>
-      <div>
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">商品</div>
-        <div class="seg-group">
-          <button class="seg-btn active" onclick="setSeg(this)">台指期</button>
-          <button class="seg-btn" onclick="setSeg(this)">小台</button>
-          <button class="seg-btn" onclick="setSeg(this)">選擇權</button>
-        </div>
-      </div>
-      <div>
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">委託類型</div>
-        <div class="seg-group">
-          <button class="seg-btn active" onclick="setSeg(this)">限價</button>
-          <button class="seg-btn" onclick="setSeg(this)">市價</button>
-          <button class="seg-btn" onclick="setSeg(this)">IOC</button>
-          <button class="seg-btn" onclick="setSeg(this)">FOK</button>
+        <div style="display:flex;gap:4px">
+          <button class="fo-seg active" style="min-width:44px" onclick="foSetSingle(this)">單式</button>
+          <button class="fo-seg" style="min-width:44px" onclick="foSetSingle(this)">價差</button>
         </div>
       </div>
-      <div class="mob-form-row">
-        <span class="mob-form-label">價格</span>
-        <button class="mob-step-btn" onclick="mobStep('mob-f-price',-1)">−</button>
-        <input class="mob-form-input" type="number" id="mob-f-price" value="40240">
-        <button class="mob-step-btn" onclick="mobStep('mob-f-price',1)">+</button>
+
+      <!-- 月份 + 買賣 -->
+      <div class="fo-row">
+        <span class="fo-label">月份</span>
+        <button id="fo-month-btn"
+          style="flex:1;padding:8px 12px;background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);color:var(--text-primary);font-family:var(--mono);font-size:14px;font-weight:600;cursor:pointer;text-align:left"
+          onclick="cycleMonth()">202606</button>
+        <div style="display:flex;gap:6px">
+          <button id="fo-dir-buy" class="fo-dir-btn fo-buy active" onclick="foSetDir('buy')">買進</button>
+          <button id="fo-dir-sell" class="fo-dir-btn fo-sell" onclick="foSetDir('sell')">賣出</button>
+        </div>
       </div>
-      <div class="mob-form-row">
-        <span class="mob-form-label">口數</span>
-        <button class="mob-step-btn" onclick="mobStep('mob-f-qty',-1)">−</button>
-        <input class="mob-form-input" type="number" id="mob-f-qty" value="1" min="1">
-        <button class="mob-step-btn" onclick="mobStep('mob-f-qty',1)">+</button>
+
+      <!-- 倉別 -->
+      <div class="fo-row">
+        <span class="fo-label">倉別</span>
+        <div class="fo-seg-group" id="fo-pos-group" style="flex:1">
+          <button class="fo-seg active" onclick="foSetSeg('fo-pos-group',this)">自動</button>
+          <button class="fo-seg" onclick="foSetSeg('fo-pos-group',this)">新倉</button>
+          <button class="fo-seg" onclick="foSetSeg('fo-pos-group',this)">平倉</button>
+          <button class="fo-seg" onclick="foSetSeg('fo-pos-group',this)">當沖</button>
+        </div>
       </div>
-      <div class="seg-group">
-        <button class="seg-btn" onclick="document.getElementById('mob-f-qty').value=1">1口</button>
-        <button class="seg-btn" onclick="document.getElementById('mob-f-qty').value=5">5口</button>
-        <button class="seg-btn" onclick="document.getElementById('mob-f-qty').value=10">10口</button>
-        <button class="seg-btn" onclick="document.getElementById('mob-f-qty').value=50">50口</button>
+
+      <!-- 條件 -->
+      <div class="fo-row">
+        <span class="fo-label">條件</span>
+        <div class="fo-seg-group" id="fo-cond-group" style="flex:1">
+          <button class="fo-seg active" onclick="foSetSeg('fo-cond-group',this)">ROD</button>
+          <button class="fo-seg" onclick="foSetSeg('fo-cond-group',this)">IOC</button>
+          <button class="fo-seg" onclick="foSetSeg('fo-cond-group',this)">FOK</button>
+        </div>
       </div>
-      <div class="risk-checklist">
-        <div style="font-size:10px;font-weight:600;color:var(--text-muted);margin-bottom:4px">Pre-Trade 風控</div>
-        <div class="rc-item"><span style="color:var(--down)">✓</span><span style="color:var(--text-secondary)">交易員啟用中</span></div>
-        <div class="rc-item"><span style="color:var(--down)">✓</span><span style="color:var(--text-secondary)">帳號正常 · 未鎖定</span></div>
-        <div class="rc-item"><span style="color:var(--warn)">!</span><span style="color:var(--warn)">日損達 44.5%（警戒 40%）</span></div>
-        <div class="rc-item"><span style="color:var(--down)">✓</span><span style="color:var(--text-secondary)">保證金充足</span></div>
-        <div class="rc-item"><span style="color:var(--down)">✓</span><span style="color:var(--text-secondary)">未觸發熔斷</span></div>
+
+      <!-- 口數 -->
+      <div class="fo-row">
+        <span class="fo-label">口數</span>
+        <input type="number" id="fo-qty" value="1" min="1"
+          style="flex:1;background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);color:var(--text-primary);font-family:var(--mono);font-size:20px;font-weight:700;padding:8px 12px;outline:none;text-align:center">
+        <button class="fo-step-btn" onclick="foStep('fo-qty',-1)">−</button>
+        <button class="fo-step-btn" onclick="foStep('fo-qty',1)">+</button>
       </div>
-      <div class="mob-dir-btns">
-        <button class="mob-dir-btn" style="background:var(--up);border-color:var(--up);color:#fff" onclick="mobSubmitOrder('futures','buy')">▲ 買進</button>
-        <button class="mob-dir-btn" style="background:var(--down);border-color:var(--down);color:#000" onclick="mobSubmitOrder('futures','sell')">▼ 賣出</button>
+
+      <!-- 價格 -->
+      <div class="fo-row">
+        <span class="fo-label">價格</span>
+        <input type="number" id="fo-price" value="40240"
+          style="flex:1;background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius);color:var(--text-primary);font-family:var(--mono);font-size:20px;font-weight:700;padding:8px 12px;outline:none;text-align:center"
+          oninput="foCalcEst()">
+        <button class="fo-step-btn" onclick="foStep('fo-price',-1)">−</button>
+        <button class="fo-step-btn" onclick="foStep('fo-price',1)">+</button>
       </div>
+
+      <!-- 取價 -->
+      <div class="fo-row">
+        <span class="fo-label">取價</span>
+        <div class="fo-seg-group" id="fo-price-type-group" style="flex:1">
+          <button class="fo-seg active" onclick="foSetSeg('fo-price-type-group',this)">限價</button>
+          <button class="fo-seg" onclick="foSetSeg('fo-price-type-group',this)">範圍市價</button>
+          <button class="fo-seg" onclick="foSetSeg('fo-price-type-group',this)">市價</button>
+        </div>
+      </div>
+
+      <!-- 最近成交 -->
+      <div style="background:var(--bg-secondary);border-top:1px solid var(--border);padding:6px 12px;display:flex;flex-direction:column;gap:3px" id="fo-recent-trades">
+        <div style="display:flex;justify-content:space-between;font-size:12px">
+          <span class="mono muted">09:36:57</span>
+          <span class="mono down">40,079</span>
+          <span class="mono up">-161</span>
+          <span class="mono muted">1 口</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:12px">
+          <span class="mono muted">09:36:55</span>
+          <span class="mono down">40,078</span>
+          <span class="mono up">-162</span>
+          <span class="mono muted">1 口</span>
+        </div>
+      </div>
+
+      <!-- 五檔報價 -->
+      <div style="flex:1;overflow:hidden">
+        <!-- 欄位標題 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;padding:5px 12px;background:var(--bg-tertiary);border-bottom:1px solid var(--border)">
+          <span style="font-size:11px;color:var(--up);text-align:right">買量</span>
+          <span style="font-size:11px;color:var(--up);text-align:right">買價</span>
+          <span style="font-size:9px;color:var(--text-muted);text-align:center">漲跌</span>
+          <span style="font-size:11px;color:var(--down);text-align:left">賣價</span>
+          <span style="font-size:11px;color:var(--down);text-align:left">賣量</span>
+        </div>
+        <div id="fo-order-book" style="padding:0 4px"></div>
+        <!-- 合計 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:6px 12px;background:var(--bg-secondary);border-top:1px solid var(--border)">
+          <span style="font-size:12px;color:var(--up);font-family:var(--mono)" id="fo-total-buy">(9)</span>
+          <span></span>
+          <span style="font-size:12px;color:var(--down);font-family:var(--mono);text-align:right" id="fo-total-sell">(11)</span>
+        </div>
+      </div>
+
+      <!-- 預估 -->
+      <div style="padding:6px 14px;background:var(--bg-card);border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted)">
+        <span>預估保證金</span>
+        <span class="mono" id="fo-est-margin">184,000</span>
+      </div>
+
+      <!-- 風控 -->
+      <div style="padding:6px 14px;background:var(--bg-card);border-top:1px solid var(--border);display:flex;flex-direction:column;gap:3px">
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:2px">Pre-Trade 風控</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <span style="font-size:11px;color:var(--down)">✓ 交易員啟用</span>
+          <span style="font-size:11px;color:var(--down)">✓ 帳號正常</span>
+          <span style="font-size:11px;color:var(--warn)">! 日損 44.5%</span>
+          <span style="font-size:11px;color:var(--down)">✓ 保證金足</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 下單 / 取消 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;flex-shrink:0">
+      <button id="fo-submit-btn" onclick="foSubmitOrder()"
+        style="padding:18px;background:var(--up);border:none;color:#fff;font-size:18px;font-weight:700;cursor:pointer;letter-spacing:1px;transition:all .15s">
+        買進
+      </button>
+      <button onclick="showToast('已取消','','warn')"
+        style="padding:18px;background:var(--bg-card);border:none;border-left:1px solid var(--border);color:var(--text-secondary);font-size:18px;font-weight:600;cursor:pointer">
+        取消
+      </button>
     </div>
   </div>
 
