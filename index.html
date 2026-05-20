@@ -762,8 +762,8 @@ function doLogin() {
   const role = document.getElementById('roleSelect').value;
   showToast('登入成功', '正在進入系統...', 'success', 2000);
   setTimeout(() => {
-    const map = { trader:'pages/trader.html', admin:'pages/admin.html', auditor:'pages/admin.html' };
-    location.href = map[role] || 'pages/trader.html';
+    const map = { trader:'trader.html', admin:'admin.html', auditor:'admin.html' };
+    location.href = map[role] || 'trader.html';
   }, 800);
 }
 </script>
